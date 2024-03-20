@@ -9,10 +9,14 @@
 2. Dos
 3. Tres
 
-**Lista Ordenada**
+**Listas Ordenadas**
 - Primero
 - Segundo
 - Tercero
+
+* A
+* B
+* C
 
 **Referencia a una figura**
 
