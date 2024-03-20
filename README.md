@@ -15,7 +15,9 @@
 - Tercero
 
 **Referencia a una figura**
-![Mate](C:\Users\Francisco\OneDrive\Lic. en Sistemas de Información\Tercer año\IS 2\IS2_TP1_GOMEZ\Mate.jpg)
+
+![Mate](https://www.65ymas.com/uploads/s1/25/66/10/bigstock-traditional-argentinian-yerba-326966854_1_621x621.jpeg)
 
 **Referencia a un link externo**
+
 [Unsplash Fuente de Imágenes](https://unsplash.com/es)
