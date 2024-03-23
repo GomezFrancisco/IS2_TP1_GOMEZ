@@ -27,6 +27,13 @@ numeros = sys.argv[1].split('-')
 desde = int(numeros[0])
 hasta = int(numeros[1])
 
+if desde < 1 or desde > 60:
+    print("Solo se aceptan valores entre 1 - 60 en para cualquier valor de entrada")
+    sys.exit(1)
+if hasta < 1 or hasta > 60:
+    print("Solo se aceptan valores entre 1 - 60 para cualquier valor de entrada")
+    sys.exit(1)
+
 if desde >= hasta:
     print("El primer número debe ser menor que el segundo número en el rango.")
     sys.exit(1)
