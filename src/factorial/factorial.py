@@ -20,9 +20,16 @@ def factorial(num):
         return fact 
 
 if len(sys.argv) < 2:
-    num = int(input("Ingrese el valor a calcular el factorial: "))
-else:
-    num = int(sys.argv[1])
+    print("Debe ingresar dos numeros")
+    sys.exit(1)
 
-print("Factorial", num, "! es", factorial(num))
+numeros = sys.argv[1].split('-')
+desde = int(numeros[0])
+hasta = int(numeros[1])
 
+if desde >= hasta:
+    print("El primer número debe ser menor que el segundo número en el rango.")
+    sys.exit(1)
+
+for num in range(desde, hasta + 1):
+    print("Factorial de", num, "! es", factorial(num))
