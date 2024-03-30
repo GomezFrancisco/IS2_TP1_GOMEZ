@@ -3,7 +3,7 @@ import argparse
 from openai import OpenAI #Se importan las librerias correspondientes.
 
 # Inicialización del cliente de OpenAI
-client = OpenAI(api_key="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") #API key
+client = OpenAI(api_key="API KEY") #API key
 #recientemente en las librerias de OpenAI,
 #me basé en la última Version: 1.14.3
 
