@@ -1,0 +1,4 @@
+El patron Flyweight se puede utilizar en videojuegos que requieran de cargas gráficas,
+donde estas pueden ser similares, y al estar ya cargadas se optimiza el uso de mememoria.
+En los juegos que suelo habituar, se suele usar el concepto carga de cache, para
+la carga de texturas y hechizos, etc.

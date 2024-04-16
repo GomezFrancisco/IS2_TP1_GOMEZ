@@ -1,0 +1,4 @@
+Se podría utilizar abstract factory, en una empresa de software,
+donde se apunte desarrollar un mismo aplicativo para diferentes
+sistemas operativos, y sea necesario personalizar las funciones
+y tratar los bugs con mayor facilidad.
