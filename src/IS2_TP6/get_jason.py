@@ -1,3 +1,6 @@
+'''
+Programa de Gestión de Balances entre Bancos a través de tokens
+'''
 import json
 import sys
 import threading
@@ -48,7 +51,8 @@ def main_function_based():
         return
 
     if len(sys.argv) != 5:
-        print("Uso: python getJason.py <archivo.json> <clave> <entidad_bancaria> <token> o python getJason.py -v")
+        print("Uso: python getJason.py <archivo.json> <clave> <entidad_bancaria><token>")
+        print("Uso: python getJason.py -v para versiones")
         return
 
     jsonfile = sys.argv[1]
@@ -168,7 +172,8 @@ def main_class_based():
         return
 
     if len(sys.argv) != 5:
-        print("Uso: python getJason.py <archivo.json> <clave> <entidad_bancaria> <token> o python getJason.py -v")
+        print("Uso: python3 getJason.py <archivo.json> <clave> <entidad_bancaria> <token>")
+        print("Uso: python getJason.py -v para versiones")
         return
 
     jsonfile = sys.argv[1]
