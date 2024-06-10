@@ -10,7 +10,7 @@ USE_CLASS_BASED_IMPLEMENTATION = True
 VERSION = "1.2"
 
 # Implementación basada en funciones
-def print_json_value(jsonfile, jsonkey, entity, token):
+def print_json_value(jsonfile, jsonkey, entity, token, account_balance):
     """
     Lee un archivo JSON y devuelve el valor asociado a una clave específica.
     
@@ -18,6 +18,7 @@ def print_json_value(jsonfile, jsonkey, entity, token):
     :param jsonkey: Clave del JSON cuyo valor se desea obtener
     :param entity: Entidad bancaria para realizar el pago
     :param token: Token para realizar el pago
+    :param account_balance: Saldo disponible en la cuenta
     :return: Valor asociado a la clave o None si no se encuentra la clave
     o si el archivo no existe o no es un JSON válido
     """
@@ -25,11 +26,16 @@ def print_json_value(jsonfile, jsonkey, entity, token):
         with open(jsonfile, 'r') as myfile:
             data = myfile.read()
             obj = json.loads(data)
-            return obj.get(jsonkey)
+            value = obj.get(jsonkey)
+            if value is not None and value <= account_balance:
+                return value
+            else:
+                return "Saldo insuficiente o clave no encontrada."
     except (FileNotFoundError, json.JSONDecodeError) as e:
         return f"Error: {e}"
     except Exception as e:
         return f"Se produjo un error inesperado: {e}"
+
 
 
 def main_function_based():
