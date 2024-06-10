@@ -12,6 +12,39 @@ USE_CLASS_BASED_IMPLEMENTATION = True
 # Versión del programa
 VERSION = "1.2"
 
+# Lista para almacenar los pagos realizados
+pagos_realizados = []
+
+class Pago:
+    """
+    Clase que representa un pago realizado.
+    """
+    def __init__(self, numero_pedido, token, monto):
+        self.numero_pedido = numero_pedido
+        self.token = token
+        self.monto = monto
+
+    def __str__(self):
+        return f"Pedido {self.numero_pedido}: Token {self.token}, Monto ${self.monto}"
+
+class PagoIterator:
+    """
+    Clase que implementa el patrón Iterator para iterar sobre los pagos realizados.
+    """
+    def __init__(self, pagos):
+        self._pagos = pagos
+        self._index = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._index < len(self._pagos):
+            pago = self._pagos[self._index]
+            self._index += 1
+            return pago
+        raise StopIteration
+
 # Implementación basada en funciones
 def print_json_value(jsonfile, jsonkey, account_balance): 
     """
@@ -46,9 +79,14 @@ def main_function_based():
         print(f"Versión {VERSION}")
         return
 
+    if len(sys.argv) == 2 and sys.argv[1] == "-l":
+        listar_pagos()
+        return
+
     if len(sys.argv) != 5:
         print("Uso: python getJason.py <archivo.json> <clave> <entidad_bancaria> <token>")
         print("Uso: python getJason.py -v para versiones")
+        print("Uso: python getJason.py -l para listar pagos realizados")
         return
 
     jsonfile = sys.argv[1]
@@ -166,9 +204,14 @@ def main_class_based():
         print(f"Versión {VERSION}")
         return
 
+    if len(sys.argv) == 2 and sys.argv[1] == "-l":
+        listar_pagos()
+        return
+
     if len(sys.argv) != 5:
         print("Uso: python3 getJason.py <archivo.json> <clave> <entidad_bancaria> <token>")
         print("Uso: python getJason.py -v para versiones")
+        print("Uso: python getJason.py -l para listar pagos realizados")
         return
 
     jsonfile = sys.argv[1]
@@ -234,7 +277,8 @@ class Token1Handler(Handler):
         if bank_name == "token1":
             if amount <= self.balance:
                 self.balance -= amount
-                print(f"Transacción exitosa. Nuevo saldo para {bank_name}: {self.balance}.")
+                pagos_realizados.append(Pago(len(pagos_realizados) + 1, bank_name, amount))
+                print(f"Transacción exitosa. Pedido {len(pagos_realizados)}: Token {bank_name}, Monto ${amount}. Nuevo saldo: {self.balance}.")
             else:
                 print("Saldo insuficiente para completar la transacción.")
         else:
@@ -252,7 +296,8 @@ class Token2Handler(Handler):
         if bank_name == "token2":
             if amount <= self.balance:
                 self.balance -= amount
-                print(f"Transacción exitosa. Nuevo saldo para {bank_name}: {self.balance}.")
+                pagos_realizados.append(Pago(len(pagos_realizados) + 1, bank_name, amount))
+                print(f"Transacción exitosa. Pedido {len(pagos_realizados)}: Token {bank_name}, Monto ${amount}. Nuevo saldo: {self.balance}.")
             else:
                 print("Saldo insuficiente para completar la transacción.")
         else:
@@ -269,9 +314,13 @@ def handle_transactions():
     # Establecer el siguiente manejador en la cadena
     token1_handler.set_successor(token2_handler)
 
-    # Ejemplo de uso
-    token1_handler.handle_request("token1", 500)  # Realizar una transacción para "token1"
-    token1_handler.handle_request("token2", 1500)  # Realizar una transacción para "token2"
+    # Realizar pedidos de pago alternando entre las cuentas
+    pedidos = [(i, 500) for i in range(1, 11)]  # 10 pedidos de $500 cada uno
+    for i, (numero_pedido, monto) in enumerate(pedidos):
+        if i % 2 == 0:
+            token1_handler.handle_request("token1", monto)
+        else:
+            token1_handler.handle_request("token2", monto)
 
 def main():
     if len(sys.argv) == 2 and sys.argv[1] == "-v":
@@ -290,6 +339,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-
+    # Realizar y listar transacciones
+    handle_transactions()
     # Mensaje de derechos de autor
     print("copyright UADERFCyT-IS2©2024 todos los derechos reservados")
