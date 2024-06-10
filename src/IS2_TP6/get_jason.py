@@ -13,14 +13,12 @@ USE_CLASS_BASED_IMPLEMENTATION = True
 VERSION = "1.2"
 
 # Implementación basada en funciones
-def print_json_value(jsonfile, jsonkey, account_balance): #entity, token,
+def print_json_value(jsonfile, jsonkey, account_balance): 
     """
     Lee un archivo JSON y devuelve el valor asociado a una clave específica.
     
     :param jsonfile: Ruta del archivo JSON
     :param jsonkey: Clave del JSON cuyo valor se desea obtener
-    :param entity: Entidad bancaria para realizar el pago
-    :param token: Token para realizar el pago
     :param account_balance: Saldo disponible en la cuenta
     :return: Valor asociado a la clave o None si no se encuentra la clave
     o si el archivo no existe o no es un JSON válido
@@ -39,8 +37,6 @@ def print_json_value(jsonfile, jsonkey, account_balance): #entity, token,
     except Exception as e:
         return f"Se produjo un error inesperado: {e}"
 
-
-
 def main_function_based():
     """
     Función principal para la implementación basada en funciones.
@@ -51,7 +47,7 @@ def main_function_based():
         return
 
     if len(sys.argv) != 5:
-        print("Uso: python getJason.py <archivo.json> <clave> <entidad_bancaria><token>")
+        print("Uso: python getJason.py <archivo.json> <clave> <entidad_bancaria> <token>")
         print("Uso: python getJason.py -v para versiones")
         return
 
@@ -120,6 +116,7 @@ class JSONHandler:
             return f"Error: {e}"
         except Exception as e:
             return f"Se produjo un error inesperado: {e}"
+            
     def get_bank_key(self, bank_name):
         """
         Lee el archivo sitedata.json y devuelve la clave asociada al nombre del banco.
@@ -136,7 +133,6 @@ class JSONHandler:
             return f"Error: {e}"
         except Exception as e:
             return f"Se produjo un error inesperado: {e}"
-
 
 class JSONPrinter:
     def __init__(self, json_handler):
@@ -160,7 +156,6 @@ class JSONPrinter:
             print(f"{{1.0}}{result}")
         else:
             print(f"No se encontró la clave '{jsonkey}' en el archivo JSON.")
-
 
 def main_class_based():
     """
@@ -197,11 +192,104 @@ def main_class_based():
     except Exception as e:
         print(f"Se produjo un error inesperado al procesar el archivo JSON: {e}")
 
-if __name__ == "__main__":
+class Handler:
+    """
+    Clase base abstracta para los manejadores de la cadena de comando.
+    """
+    def __init__(self, successor=None):
+        """
+        Inicializa el manejador con un sucesor opcional en la cadena.
+
+        :param successor: El siguiente manejador en la cadena de comando.
+        """
+        self._successor = successor
+
+    def handle_request(self, bank_name, amount):
+        """
+        Maneja la solicitud o pasa la solicitud al siguiente manejador en la cadena.
+
+        :param bank_name: Nombre del banco (token)
+        :param amount: Monto de la transacción
+        """
+        if self._successor is not None:
+            self._successor.handle_request(bank_name, amount)
+
+    def set_successor(self, successor):
+        """
+        Establece el siguiente manejador en la cadena de comando.
+
+        :param successor: El siguiente manejador en la cadena de comando.
+        """
+        self._successor = successor
+
+class Token1Handler(Handler):
+    """
+    Manejador para la cuenta correspondiente a "token1".
+    """
+    def __init__(self, balance=1000):
+        super().__init__()
+        self.balance = balance
+
+    def handle_request(self, bank_name, amount):
+        if bank_name == "token1":
+            if amount <= self.balance:
+                self.balance -= amount
+                print(f"Transacción exitosa. Nuevo saldo para {bank_name}: {self.balance}.")
+            else:
+                print("Saldo insuficiente para completar la transacción.")
+        else:
+            super().handle_request(bank_name, amount)
+
+class Token2Handler(Handler):
+    """
+    Manejador para la cuenta correspondiente a "token2".
+    """
+    def __init__(self, balance=2000):
+        super().__init__()
+        self.balance = balance
+
+    def handle_request(self, bank_name, amount):
+        if bank_name == "token2":
+            if amount <= self.balance:
+                self.balance -= amount
+                print(f"Transacción exitosa. Nuevo saldo para {bank_name}: {self.balance}.")
+            else:
+                print("Saldo insuficiente para completar la transacción.")
+        else:
+            super().handle_request(bank_name, amount)
+
+def handle_transactions():
+    """
+    Maneja las transacciones entre los manejadores de tokens.
+    """
+    # Configuración de la cadena de comando
+    token1_handler = Token1Handler()
+    token2_handler = Token2Handler()
+
+    # Establecer el siguiente manejador en la cadena
+    token1_handler.set_successor(token2_handler)
+
+    # Ejemplo de uso
+    token1_handler.handle_request("token1", 500)  # Realizar una transacción para "token1"
+    token1_handler.handle_request("token2", 1500)  # Realizar una transacción para "token2"
+
+def main():
+    if len(sys.argv) == 2 and sys.argv[1] == "-v":
+        print(f"Versión {VERSION}")
+        return
+
+    if len(sys.argv) != 5:
+        print("Uso: python getJason.py <archivo.json> <clave> <entidad_bancaria> <token>")
+        print("Uso: python getJason.py -v para versiones")
+        return
+
     if USE_CLASS_BASED_IMPLEMENTATION:
         main_class_based()
     else:
         main_function_based()
+
+if __name__ == "__main__":
+    main()
 
     # Mensaje de derechos de autor
     print("copyright UADERFCyT-IS2©2024 todos los derechos reservados")
