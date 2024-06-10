@@ -1,19 +1,34 @@
 import json
 import sys
 
-def print_json_value(jsonfile, jsonkey):
-    try:
-        with open(jsonfile, 'r') as myfile:
-            data = myfile.read()
-            obj = json.loads(data)
-            if jsonkey in obj:
-                return obj[jsonkey]
-            else:
-                return None
-    except FileNotFoundError:
-        return f"El archivo '{jsonfile}' no existe."
-    except json.JSONDecodeError:
-        return f"El archivo '{jsonfile}' no es un JSON válido."
+class JSONHandler:
+    def __init__(self, jsonfile):
+        self.jsonfile = jsonfile
+
+    def get_value(self, jsonkey):
+        try:
+            with open(self.jsonfile, 'r') as myfile:
+                data = myfile.read()
+                obj = json.loads(data)
+                if jsonkey in obj:
+                    return obj[jsonkey]
+                else:
+                    return None
+        except FileNotFoundError:
+            return f"El archivo '{self.jsonfile}' no existe."
+        except json.JSONDecodeError:
+            return f"El archivo '{self.jsonfile}' no es un JSON válido."
+
+class JSONPrinter:
+    def __init__(self, json_handler):
+        self.json_handler = json_handler
+
+    def print_value(self, jsonkey):
+        result = self.json_handler.get_value(jsonkey)
+        if result is not None:
+            print(f"{{1.0}}{result}")
+        else:
+            print(f"No se encontró la clave '{jsonkey}' en el archivo JSON.")
 
 def main():
     if len(sys.argv) != 3:
@@ -22,12 +37,10 @@ def main():
 
     jsonfile = sys.argv[1]
     jsonkey = sys.argv[2]
-    result = print_json_value(jsonfile, jsonkey)
 
-    if result is not None:
-        print(f"{{1.0}}{result}")
-    else:
-        print(f"No se encontró la clave '{jsonkey}' en el archivo JSON.")
+    json_handler = JSONHandler(jsonfile)
+    json_printer = JSONPrinter(json_handler)
+    json_printer.print_value(jsonkey)
 
 if __name__ == "__main__":
     main()
