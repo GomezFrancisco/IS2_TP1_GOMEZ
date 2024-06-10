@@ -93,21 +93,41 @@ class JSONHandler:
                     cls._instance.jsonfile = jsonfile
         return cls._instance
 
-    def get_value(self, jsonkey, entity, token):
+    def get_value(self, jsonkey, bank_name, token):
         """
         Lee un archivo JSON y devuelve el valor asociado a una clave específica.
-    
+
         :param jsonkey: Clave del JSON cuyo valor se desea obtener
-        :param entity: Entidad bancaria para realizar el pago
+        :param bank_name: Nombre del banco (token)
         :param token: Token para realizar el pago
         :return: Valor asociado a la clave o None si no se encuentra la clave,
         si el archivo no existe o si no es un JSON válido
         """
         try:
+            bank_key = self.get_bank_key(bank_name)
+            if bank_key is None:
+                return "No se encontró la clave del banco en el archivo sitedata.json."
+
             with open(self.jsonfile, 'r') as myfile:
                 data = myfile.read()
                 obj = json.loads(data)
-                return obj.get(jsonkey)
+                return obj.get(bank_key, {}).get(jsonkey)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            return f"Error: {e}"
+        except Exception as e:
+            return f"Se produjo un error inesperado: {e}"
+    def get_bank_key(self, bank_name):
+        """
+        Lee el archivo sitedata.json y devuelve la clave asociada al nombre del banco.
+
+        :param bank_name: Nombre del banco (token)
+        :return: Clave asociada al nombre del banco o None si no se encuentra el banco
+        """
+        try:
+            with open("sitedata.json", 'r') as sitefile:
+                data = sitefile.read()
+                obj = json.loads(data)
+                return obj.get(bank_name)
         except (FileNotFoundError, json.JSONDecodeError) as e:
             return f"Error: {e}"
         except Exception as e:
@@ -123,15 +143,15 @@ class JSONPrinter:
         """
         self.json_handler = json_handler
 
-    def print_value(self, jsonkey, entity, token):
+    def print_value(self, jsonkey, bank_name, token):
         """
         Imprime el valor asociado a una clave específica en el JSON.
-        
+
         :param jsonkey: Clave del JSON cuyo valor se desea imprimir
-        :param entity: Entidad bancaria para realizar el pago
+        :param bank_name: Nombre del banco (token)
         :param token: Token para realizar el pago
         """
-        result = self.json_handler.get_value(jsonkey, entity, token)
+        result = self.json_handler.get_value(jsonkey, bank_name, token)
         if result is not None:
             print(f"{{1.0}}{result}")
         else:
