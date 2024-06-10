@@ -16,7 +16,8 @@ def print_json_value(jsonfile, jsonkey):
     
     :param jsonfile: Ruta del archivo JSON
     :param jsonkey: Clave del JSON cuyo valor se desea obtener
-    :return: Valor asociado a la clave o mensaje de error si el archivo no existe o no es un JSON válido
+    :return: Valor asociado a la clave o None si no se encuentra la clave
+    o si el archivo no existe o no es un JSON válido
     """
     try:
         with open(jsonfile, 'r') as myfile:
@@ -64,6 +65,9 @@ def main_function_based():
 
 # Implementación basada en clases (Singleton)
 class JSONHandler:
+    """
+    Manejador de las clases Singleton
+    """
     _instance = None
     _lock = threading.Lock()
 
@@ -84,24 +88,21 @@ class JSONHandler:
     def get_value(self, jsonkey):
         """
         Lee un archivo JSON y devuelve el valor asociado a una clave específica.
-        
+    
         :param jsonkey: Clave del JSON cuyo valor se desea obtener
-        :return: Valor asociado a la clave o mensaje de error si el archivo no existe o no es un JSON válido
+        :return: Valor asociado a la clave o None si no se encuentra la clave,
+        si el archivo no existe o si no es un JSON válido
         """
         try:
             with open(self.jsonfile, 'r') as myfile:
                 data = myfile.read()
                 obj = json.loads(data)
-                if jsonkey in obj:
-                    return obj[jsonkey]
-                else:
-                    return None
-        except FileNotFoundError:
-            return f"El archivo '{self.jsonfile}' no existe."
-        except json.JSONDecodeError:
-            return f"El archivo '{self.jsonfile}' no es un JSON válido."
+                return obj.get(jsonkey)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            return f"Error: {e}"
         except Exception as e:
             return f"Se produjo un error inesperado: {e}"
+
 
 class JSONPrinter:
     def __init__(self, json_handler):
