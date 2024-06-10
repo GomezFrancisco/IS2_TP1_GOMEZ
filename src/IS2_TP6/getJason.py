@@ -27,6 +27,8 @@ class JSONHandler:
             return f"El archivo '{self.jsonfile}' no existe."
         except json.JSONDecodeError:
             return f"El archivo '{self.jsonfile}' no es un JSON válido."
+        except Exception as e:
+            return f"Se produjo un error inesperado: {e}"
 
 class JSONPrinter:
     def __init__(self, json_handler):
@@ -47,9 +49,16 @@ def main():
     jsonfile = sys.argv[1]
     jsonkey = sys.argv[2]
 
-    json_handler = JSONHandler(jsonfile)
-    json_printer = JSONPrinter(json_handler)
-    json_printer.print_value(jsonkey)
+    if not jsonfile.endswith('.json'):
+        print("El archivo especificado no tiene una extensión '.json'.")
+        return
+
+    try:
+        json_handler = JSONHandler(jsonfile)
+        json_printer = JSONPrinter(json_handler)
+        json_printer.print_value(jsonkey)
+    except Exception as e:
+        print(f"Se produjo un error inesperado al procesar el archivo JSON: {e}")
 
 if __name__ == "__main__":
     main()
