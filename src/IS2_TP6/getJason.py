@@ -2,6 +2,39 @@ import json
 import sys
 import threading
 
+# Variable para alternar entre el código basado en funciones y el basado en clases
+USE_CLASS_BASED_IMPLEMENTATION = False
+
+# Implementación basada en funciones
+def print_json_value(jsonfile, jsonkey):
+    try:
+        with open(jsonfile, 'r') as myfile:
+            data = myfile.read()
+            obj = json.loads(data)
+            if jsonkey in obj:
+                return obj[jsonkey]
+            else:
+                return None
+    except FileNotFoundError:
+        return f"El archivo '{jsonfile}' no existe."
+    except json.JSONDecodeError:
+        return f"El archivo '{jsonfile}' no es un JSON válido."
+
+def main_function_based():
+    if len(sys.argv) != 3:
+        print("Uso: python getJason.py <archivo.json> <clave>")
+        return
+
+    jsonfile = sys.argv[1]
+    jsonkey = sys.argv[2]
+    result = print_json_value(jsonfile, jsonkey)
+
+    if result is not None:
+        print(f"{{1.0}}{result}")
+    else:
+        print(f"No se encontró la clave '{jsonkey}' en el archivo JSON.")
+
+# Implementación basada en clases (Singleton)
 class JSONHandler:
     _instance = None
     _lock = threading.Lock()
@@ -41,7 +74,7 @@ class JSONPrinter:
         else:
             print(f"No se encontró la clave '{jsonkey}' en el archivo JSON.")
 
-def main():
+def main_class_based():
     if len(sys.argv) != 3:
         print("Uso: python getJason.py <archivo.json> <clave>")
         return
@@ -61,4 +94,8 @@ def main():
         print(f"Se produjo un error inesperado al procesar el archivo JSON: {e}")
 
 if __name__ == "__main__":
-    main()
+    if USE_CLASS_BASED_IMPLEMENTATION:
+        main_class_based()
+    else:
+        main_function_based()
+
