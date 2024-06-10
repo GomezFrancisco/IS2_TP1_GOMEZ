@@ -1,9 +1,18 @@
 import json
 import sys
+import threading
 
 class JSONHandler:
-    def __init__(self, jsonfile):
-        self.jsonfile = jsonfile
+    _instance = None
+    _lock = threading.Lock()
+
+    def __new__(cls, jsonfile):
+        if cls._instance is None:
+            with cls._lock:
+                if cls._instance is None:
+                    cls._instance = super(JSONHandler, cls).__new__(cls)
+                    cls._instance.jsonfile = jsonfile
+        return cls._instance
 
     def get_value(self, jsonkey):
         try:
