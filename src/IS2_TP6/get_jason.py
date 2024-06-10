@@ -13,7 +13,7 @@ USE_CLASS_BASED_IMPLEMENTATION = True
 VERSION = "1.2"
 
 # Implementación basada en funciones
-def print_json_value(jsonfile, jsonkey, entity, token, account_balance):
+def print_json_value(jsonfile, jsonkey, account_balance): #entity, token,
     """
     Lee un archivo JSON y devuelve el valor asociado a una clave específica.
     
