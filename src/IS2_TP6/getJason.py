@@ -6,6 +6,9 @@ import os
 # Variable para alternar entre el código basado en funciones y el basado en clases
 USE_CLASS_BASED_IMPLEMENTATION = True
 
+# Versión del programa
+VERSION = "1.1"
+
 # Implementación basada en funciones
 def print_json_value(jsonfile, jsonkey):
     """
@@ -33,8 +36,12 @@ def main_function_based():
     Función principal para la implementación basada en funciones.
     Verifica los argumentos de línea de comandos y muestra el valor del JSON.
     """
+    if len(sys.argv) == 2 and sys.argv[1] == "-v":
+        print(f"Versión {VERSION}")
+        return
+
     if len(sys.argv) != 3:
-        print("Uso: python getJason.py <archivo.json> <clave>")
+        print("Uso: python getJason.py <archivo.json> <clave> o python getJason.py -v")
         return
 
     jsonfile = sys.argv[1]
@@ -122,8 +129,12 @@ def main_class_based():
     Función principal para la implementación basada en clases.
     Verifica los argumentos de línea de comandos y muestra el valor del JSON.
     """
+    if len(sys.argv) == 2 and sys.argv[1] == "-v":
+        print(f"Versión {VERSION}")
+        return
+
     if len(sys.argv) != 3:
-        print("Uso: python getJason.py <archivo.json> <clave>")
+        print("Uso: python getJason.py <archivo.json> <clave> o python getJason.py -v")
         return
 
     jsonfile = sys.argv[1]
