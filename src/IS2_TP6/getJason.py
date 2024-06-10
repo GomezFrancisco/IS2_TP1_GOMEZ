@@ -1,6 +1,7 @@
 import json
 import sys
 import threading
+import os
 
 # Variable para alternar entre el código basado en funciones y el basado en clases
 USE_CLASS_BASED_IMPLEMENTATION = True
@@ -38,6 +39,15 @@ def main_function_based():
 
     jsonfile = sys.argv[1]
     jsonkey = sys.argv[2]
+
+    if not os.path.isfile(jsonfile):
+        print(f"El archivo '{jsonfile}' no existe.")
+        return
+
+    if not jsonfile.endswith('.json'):
+        print("El archivo especificado no tiene una extensión '.json'.")
+        return
+
     result = print_json_value(jsonfile, jsonkey)
 
     if result is not None:
@@ -119,6 +129,10 @@ def main_class_based():
     jsonfile = sys.argv[1]
     jsonkey = sys.argv[2]
 
+    if not os.path.isfile(jsonfile):
+        print(f"El archivo '{jsonfile}' no existe.")
+        return
+
     if not jsonfile.endswith('.json'):
         print("El archivo especificado no tiene una extensión '.json'.")
         return
@@ -137,4 +151,4 @@ if __name__ == "__main__":
         main_function_based()
 
     # Mensaje de derechos de autor
-    print("COPYRIGHT UADERFCyT-IS2©2024 todos los derechos reservados")
+    print("copyright UADERFCyT-IS2©2024 todos los derechos reservados")
