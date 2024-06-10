@@ -7,15 +7,17 @@ import os
 USE_CLASS_BASED_IMPLEMENTATION = True
 
 # Versión del programa
-VERSION = "1.1"
+VERSION = "1.2"
 
 # Implementación basada en funciones
-def print_json_value(jsonfile, jsonkey):
+def print_json_value(jsonfile, jsonkey, entity, token):
     """
     Lee un archivo JSON y devuelve el valor asociado a una clave específica.
     
     :param jsonfile: Ruta del archivo JSON
     :param jsonkey: Clave del JSON cuyo valor se desea obtener
+    :param entity: Entidad bancaria para realizar el pago
+    :param token: Token para realizar el pago
     :return: Valor asociado a la clave o None si no se encuentra la clave
     o si el archivo no existe o no es un JSON válido
     """
@@ -23,14 +25,12 @@ def print_json_value(jsonfile, jsonkey):
         with open(jsonfile, 'r') as myfile:
             data = myfile.read()
             obj = json.loads(data)
-            if jsonkey in obj:
-                return obj[jsonkey]
-            else:
-                return None
-    except FileNotFoundError:
-        return f"El archivo '{jsonfile}' no existe."
-    except json.JSONDecodeError:
-        return f"El archivo '{jsonfile}' no es un JSON válido."
+            return obj.get(jsonkey)
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        return f"Error: {e}"
+    except Exception as e:
+        return f"Se produjo un error inesperado: {e}"
+
 
 def main_function_based():
     """
@@ -41,12 +41,14 @@ def main_function_based():
         print(f"Versión {VERSION}")
         return
 
-    if len(sys.argv) != 3:
-        print("Uso: python getJason.py <archivo.json> <clave> o python getJason.py -v")
+    if len(sys.argv) != 5:
+        print("Uso: python getJason.py <archivo.json> <clave> <entidad_bancaria> <token> o python getJason.py -v")
         return
 
     jsonfile = sys.argv[1]
     jsonkey = sys.argv[2]
+    entity = sys.argv[3]
+    token = sys.argv[4]
 
     if not os.path.isfile(jsonfile):
         print(f"El archivo '{jsonfile}' no existe.")
@@ -56,7 +58,7 @@ def main_function_based():
         print("El archivo especificado no tiene una extensión '.json'.")
         return
 
-    result = print_json_value(jsonfile, jsonkey)
+    result = print_json_value(jsonfile, jsonkey, entity, token)
 
     if result is not None:
         print(f"{{1.0}}{result}")
@@ -85,11 +87,13 @@ class JSONHandler:
                     cls._instance.jsonfile = jsonfile
         return cls._instance
 
-    def get_value(self, jsonkey):
+    def get_value(self, jsonkey, entity, token):
         """
         Lee un archivo JSON y devuelve el valor asociado a una clave específica.
     
         :param jsonkey: Clave del JSON cuyo valor se desea obtener
+        :param entity: Entidad bancaria para realizar el pago
+        :param token: Token para realizar el pago
         :return: Valor asociado a la clave o None si no se encuentra la clave,
         si el archivo no existe o si no es un JSON válido
         """
@@ -113,17 +117,20 @@ class JSONPrinter:
         """
         self.json_handler = json_handler
 
-    def print_value(self, jsonkey):
+    def print_value(self, jsonkey, entity, token):
         """
         Imprime el valor asociado a una clave específica en el JSON.
         
         :param jsonkey: Clave del JSON cuyo valor se desea imprimir
+        :param entity: Entidad bancaria para realizar el pago
+        :param token: Token para realizar el pago
         """
-        result = self.json_handler.get_value(jsonkey)
+        result = self.json_handler.get_value(jsonkey, entity, token)
         if result is not None:
             print(f"{{1.0}}{result}")
         else:
             print(f"No se encontró la clave '{jsonkey}' en el archivo JSON.")
+
 
 def main_class_based():
     """
@@ -134,8 +141,8 @@ def main_class_based():
         print(f"Versión {VERSION}")
         return
 
-    if len(sys.argv) != 3:
-        print("Uso: python getJason.py <archivo.json> <clave> o python getJason.py -v")
+    if len(sys.argv) != 5:
+        print("Uso: python getJason.py <archivo.json> <clave> <entidad_bancaria> <token> o python getJason.py -v")
         return
 
     jsonfile = sys.argv[1]
@@ -149,10 +156,13 @@ def main_class_based():
         print("El archivo especificado no tiene una extensión '.json'.")
         return
 
+    entity = sys.argv[3]
+    token = sys.argv[4]
+
     try:
         json_handler = JSONHandler(jsonfile)
         json_printer = JSONPrinter(json_handler)
-        json_printer.print_value(jsonkey)
+        json_printer.print_value(jsonkey, entity, token)
     except Exception as e:
         print(f"Se produjo un error inesperado al procesar el archivo JSON: {e}")
 
@@ -164,4 +174,3 @@ if __name__ == "__main__":
 
     # Mensaje de derechos de autor
     print("copyright UADERFCyT-IS2©2024 todos los derechos reservados")
-    
